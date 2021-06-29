@@ -1,5 +1,6 @@
 # Regular Support imports
 import os
+import re
 import shutil
 import numpy as np
 import pandas as pd
@@ -106,7 +107,7 @@ async def processing(chat_file):
 
         # Link Shared
         URLPATTERN = r'(https?://\S+)'
-        df['urlcount'] = df.Message.apply(lambda x: regex.findall(URLPATTERN, x)).str.len()
+        df['urlcount'] = df.Message.apply(lambda x: re.findall(URLPATTERN, x)).str.len()
         links = np.sum(df.urlcount)
 
         author_list = [author for author in df["Author"].unique() if author is not None ]
