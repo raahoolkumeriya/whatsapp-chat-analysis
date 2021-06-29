@@ -1,0 +1,74 @@
+<html>
+
+<head>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+
+  <style type="text/css">
+    body {
+      background-color: #ffffff;
+
+    }
+
+    body>.grid {
+      height: 200%;
+    }
+
+    .image {
+      margin-top: -0px;
+    }
+
+    .container {
+      backdrop-filter: blur(10px);
+    }
+
+    @keyframes back-to-docs {
+      0% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(0.5em);
+      }
+
+      100% {
+        transform: translateY(0);
+      }
+    }
+  </style>
+  <script>
+    $(document)
+      .ready(function () {
+        $('.autumn.leaf')
+          .transition('set looping')
+          .transition('pulse', '2000ms')
+      });
+
+  </script>
+</head>
+
+<body>
+  <div class="ui middle container  aligned">
+
+    <div class="ui hidden divider"></div>
+
+
+    <div class="ui  middle aligned center aligned grid slogan">
+      <img class="ui image autumn leaf" src="{{ url_for('static', path='404.svg') }}">
+    </div>
+
+    <div>
+    </div>
+
+    <div class="ui hidden divider"></div>
+
+    <div style="position:fixed;margin:0%;bottom:0;left:0;animation:back-to-docs 1.5s ease-in-out infinite;z-index:6">
+      <a aria-current="page" class="ui teal button positive active leaf" role="button" href="/">
+        <i aria-hidden="true" class="left arrow icon"></i>Let's Go Home</a>
+    </div>
+
+    </div>
+</body>
+</html>

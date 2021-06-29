@@ -1,0 +1,9 @@
+fastapi==0.65.0
+uvicorn==0.14.0 
+python-multipart==0.0.5
+matplotlib==3.3.4
+numpy== 1.18.5
+pandas==1.2.3
+wordcloud==1.8.1 
+jinja2==2.11.3
+pydantic==1.8.2
