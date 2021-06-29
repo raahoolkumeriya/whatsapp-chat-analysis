@@ -7,3 +7,4 @@ pandas==1.2.3
 wordcloud==1.8.1 
 jinja2==2.11.3
 pydantic==1.8.2
+emoji==1.2.0
