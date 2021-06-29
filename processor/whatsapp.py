@@ -1,5 +1,5 @@
 import io
-import regex
+import re
 import emoji
 import urllib
 import base64
@@ -22,7 +22,7 @@ class WhatsAppChatAnalysis:
 
     def parse_date_time(self,string):
         """Parse the Date and Time with regex match"""
-        if regex.match(self.pattern, string):
+        if re.match(self.pattern, string):
             return True
         return False
     

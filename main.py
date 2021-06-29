@@ -1,6 +1,5 @@
 # Regular Support imports
 import os
-import regex
 import shutil
 import numpy as np
 import pandas as pd
