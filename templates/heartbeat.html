@@ -1,69 +1,22 @@
-<html>
 
-<head>
-  <script src="https://code.jquery.com/jquery-3.1.1.min.js"
-    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+{% extends "base.html" %}
 
-  <style type="text/css">
-    body {
-      background-color: #ffffff;
+{% block title %}Heartbeat{% endblock %}
 
-    }
+{% block page_content %}
 
-    body>.grid {
-      height: 200%;
-    }
+  {% block head %}
+  {{ super() }}
 
-    .image {
-      margin-top: -0px;
-    }
+  {% endblock %}
 
-    .container {
-      backdrop-filter: blur(10px);
-    }
 
-    @keyframes back-to-docs {
-      0% {
-        transform: translateY(0);
-      }
+  {% include 'include/menu.html' %}
 
-      50% {
-        transform: translateY(0.35em);
-      }
+  
+    <div class="ui middle container  aligned">
 
-      100% {
-        transform: translateY(0);
-      }
-    }
-  </style>
-  <script>
-    $(document)
-      .ready(function () {
-        $('.autumn.leaf')
-          .transition('set looping')
-          .transition('pulse', '2000ms')
-      });
-
-  </script>
-</head>
-
-<body>
-  <div class="ui middle container  aligned">
-
-    <div class="ui hidden divider"></div>
-    <div class="ui secondary menu">
-      <a class="active item" href="/">
-        WhatsApp Chat Processor
-      </a>
-      <div class="right menu">
-        <a class="ui item" href="https://codelocked.herokuapp.com/home/home/" target="_blank">
-          About
-        </a>
-      </div>
-    </div>
-
+   
 
     <div class="ui massive middle aligned center aligned grid slogan">
       <img class="ui circular image autumn leaf" src="{{ url_for('static', path='heartbeat.svg') }}">
@@ -73,14 +26,12 @@
     </div>
 
     <div class="ui hidden divider"></div>
+    
+    
+    {% include 'include/floatingbutton.html' %}
 
-    <div style="position:fixed;margin:1em;bottom:0;left:0;animation:back-to-docs 1.5s ease-in-out infinite;z-index:6">
-      <a aria-current="page" class="ui teal button positive active leaf" role="button" href="/">
-        <i aria-hidden="true" class="left arrow icon"></i>Home</a>
 
-    </div>
-
-    <div style="position:fixed;margin:0;bottom:0;right:0;z-index:6">
+    <div style="position:fixed;margin:+10%;bottom:0;right:0;z-index:6">
 
       <div class="ui buttons">
         <button class="ui positive button" data-tooltip=" write to: rahul.kumeriya@outlook.com"
@@ -96,5 +47,11 @@
           <i aria-hidden="true" class="github icon"></i></a>
       </div>
     </div>
-</body>
-</html>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+
+
+{% endblock %}

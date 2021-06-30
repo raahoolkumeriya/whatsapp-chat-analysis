@@ -1,51 +1,15 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-  <!-- Standard Meta -->
+{% block title %}Statistics{% endblock %}
 
-  <script src="https://code.jquery.com/jquery-3.1.1.min.js"
-    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
-<style>
-    @keyframes back-to-docs {
-      0% {
-        transform: translateY(0);
-      }
+{% block page_content %}
 
-      50% {
-        transform: translateY(0.35em);
-      }
+{% block head %}
+{{ super() }}
 
-      100% {
-        transform: translateY(0);
-      }
-    }
-  </style>
+{% endblock %}
 
-</head>
-
-<body id="example" class="popup" ontouchstart="">
-
-  <div style="margin-top:3em" class="ui container">
-
-    <div class="ui secondary menu">
-      <a class="active item" href="/">
-        <i class="ui home icon"></i>Home
-      </a>
-      <div class="right menu">
-        <a class="item" href="/redoc" target="_blank">
-          API Documentation
-        </a>
-        <a class="item" href="/docs" target="_blank">
-          Swagger UI
-        </a>
-        <a class="ui item" href="https://codelocked.herokuapp.com/home/home/" target="_blank">
-          About
-        </a>
-      </div>
-    </div>
+  {% include 'include/menu.html' %}
 
 
     <div class="ui horizontal divider">
@@ -54,7 +18,7 @@
 
     <div class="ui hidden divider"></div>
 
-    <div class="ui padded five statistics">
+    <div class="ui three grid statistics">
       <div class="ui statistic">
         <div class="value">{{ context.total_messages }}</div>
         <div class="label">Total Messages</div>
@@ -67,18 +31,23 @@
         <div class="value">{{ context.total_images }}</div>
         <div class="label">Total Media</div>
       </div>
-      <div class="ui statistic">
+    </div>
+
+    <div class="ui two grid statistics">
+      <div class="ui  statistic">
         <div class="value">{{ context.total_link }}</div>
         <div class="label">Total Links</div>
       </div>
-      <div class="ui statistic">
+      <div class="ui floated statistic">
         <div class="value"><img src="{{ url_for('static', path='members.svg') }}" class="ui circular inline image">
           {{context.author_list }}</div>
         <div class="label">Group Members</div>
       </div>
     </div>
 
+
     <div class="ui hidden divider"></div>
+
 
     <div class="ui padded horizontal divider">
       <h4 class="ui header"><i aria-hidden="true" class="braille icon"></i>Distribution</h4>
@@ -88,139 +57,150 @@
 
 
 
-    <div class="ui padded very relaxed stackable grid">
-      <div class="fourteen wide column">
 
-        <div class="ui padded link cards" style="margin-left: -50px;">
-          {% for data in context.user_data %}
+    <div class="ui centered cards">
 
-          <div class="ui raised card" id="longer-{{ data.user_number }}">
-            <div class="content">
-              <div class="floating ui green label">{{ data.user_number }}</div>
-              <div class="right floated meta"><span>{{ data.avg_words_per_msg }} aw/m <i
-                    class="keyboard outline icon"></i> </span></div>
-              <a class="ui large {{ data.color }} label">
-                {{ data.author }}
-              </a>
+      {% for data in context.user_data %}
 
-            </div>
-            <div class="image">
-              <img src="{{ data.word_cloud }}" data-toggle="modal">
-            </div>
-            <div class="content">
-              <span class="right floated">
-                <i class="whatsapp square like icon"></i>
-                {{ data.emojis_sent }} Emoji's
-              </span>
-              <i class="comment icon"></i>
-              {{ data.message_sent }} Messages
-            </div>
-            <div class="extra content">
-              <span class="right floated">
-                <i class="images icon"></i>
-                {{ data.media_msg }} Media
-              </span>
-              <span>
-                <i class="linkify icon"></i>
-                {{ data.link_share }} Shared
-              </span>
-            </div>
+      <div class="ui raised card" id="longer-{{ data.user_number }}">
+        <div class="content">
+          <div class="floating ui green label">{{ data.user_number }}</div>
+          <div class="right floated meta"><span>{{ data.avg_words_per_msg }} aw/m <i class="keyboard outline icon"></i>
+            </span></div>
+          <a class="ui large {{ data.color }} label">
+            {{ data.author }}
+            </a>
+
+          </div>
+          <div class="image">
+            <img src="{{ data.word_cloud }}" data-toggle="modal">
+          </div>
+          <div class="content">
+            <span class="right floated">
+              <i class="whatsapp square like icon"></i>
+              {{ data.emojis_sent }} Emoji's
+            </span>
+            <i class="comment icon"></i>
+            {{ data.message_sent }} Messages
+          </div>
+          <div class="extra content">
+            <span class="right floated">
+              <i class="images icon"></i>
+              {{ data.media_msg }} Media
+            </span>
+            <span>
+              <i class="linkify icon"></i>
+              {{ data.link_share }} Shared
+            </span>
           </div>
 
+      </div>
 
 
-          <div class="ui basic large modal longer-{{ data.user_number }}">
-            <i class="close icon"></i>
-            <div class="header">
-              {{ data.author }}
-            </div>
-            <div class="image content">
-              <div class="ui massive image">
-                <img src="{{ data.word_cloud }}">
-              </div>
-              <div class="description">
-                <div class="ui white header">Summary</div>
+      <div class="ui basic large modal longer-{{ data.user_number }}">
+        <i class="close icon"></i>
+        <div class="header">
+          {{ data.author }}
+        </div>
+        <div class="image content">
+          <div class="ui massive image">
+            <img src="{{ data.word_cloud }}">
+          </div>
+          <div class="description">
+            <div class="ui white header">Summary</div>
 
-                <div class="ui two column grid">
-                  <div class="column">
-                    <div class="ui raised segment">
-                      <a class="ui red ribbon label">Messages</a>
-                      <div class="ui hidden divider"></div>
-                      <a class="ui {{ data.color }} circular label">{{ data.message_sent }}</a>
-                      <p></p>
-                      <a class="ui blue ribbon label">Emoji's</a>
-                      <div class="ui hidden divider"></div>
-                      <a class="ui {{ data.color }} circular label">{{ data.emojis_sent }}</a>
-                      <p></p>
-                    </div>
-                  </div>
-                  <div class="column">
-                    <div class="ui raised segment">
-                      <a class="ui orange right ribbon label">Media</a>
-                      <div class="ui hidden divider"></div>
-                      <a class="ui {{ data.color }} circular label">{{ data.media_msg}}</a>
-                      <p></p>
-                      <a class="ui teal right ribbon label">Links</a>
-                      <div class="ui hidden divider"></div>
-                      <a class="ui {{ data.color }} circular label">{{ data.link_share }}</a>
-                      <p></p>
-                    </div>
-                  </div>
+            <div class="ui two column grid">
+              <div class="column">
+                <div class="ui raised segment">
+                  <a class="ui red ribbon label">Messages</a>
+                  <div class="ui hidden divider"></div>
+                  <a class="ui {{ data.color }} circular label">{{ data.message_sent }}</a>
+                  <p></p>
+                  <a class="ui blue ribbon label">Emoji's</a>
+                  <div class="ui hidden divider"></div>
+                  <a class="ui {{ data.color }} circular label">{{ data.emojis_sent }}</a>
+                  <p></p>
                 </div>
+              </div>
+              <div class="column">
+                <div class="ui raised segment">
+                  <a class="ui orange right ribbon label">Media</a>
+                  <div class="ui hidden divider"></div>
+                  <a class="ui {{ data.color }} circular label">{{ data.media_msg}}</a>
+                  <p></p>
+                  <a class="ui teal right ribbon label">Links</a>
+                  <div class="ui hidden divider"></div>
+                  <a class="ui {{ data.color }} circular label">{{ data.link_share }}</a>
+                  <p></p>
+                </div>
+              </div>
+            </div>
 
-              </div>
-            </div>
-            <div class="actions">
-              <div class="ui positive deny button">
-                Close Me
-              </div>
-            </div>
           </div>
-
-
-          <script type="text/javascript">
-            $(function () {
-              $("#longer-{{ data.user_number }}").click(function () {
-                $(".longer-{{ data.user_number }}").modal('show');
-              });
-              $(".longer-{{ data.user_number }}").modal({
-                closable: true
-              });
-            });
-          </script>
-          {% endfor %}
         </div>
-
-      </div>
-
-
-      <div class="two fluid wide column" style="margin-left: -100px;">
-
-        <div class="row">
-
-          <div class="column">
-
-            <div class="ui vertical menu">
-              <div class="ui black right ribbon label" style="margin-left: -15px;">
-                <i class="comment outline icon"></i>Top Messenger
-              </div>
-              {% for data in context.user_data|sort(attribute='message_sent', reverse = True) %}
-              <div class="item">{{ data.author }} <div class="ui label">{{ data.message_sent }}</div>
-              </div>
-              {% endfor %}
-            </div>
+        <div class="actions">
+          <div class="ui positive deny button">
+            Close Me
           </div>
         </div>
       </div>
 
 
-      <div style="position:fixed;margin:2em;bottom:0;right:0;animation:back-to-docs 1.5s ease-in-out infinite;z-index:6">
-        <a aria-current="page" class="ui teal button positive active leaf" role="button" href="/">
-          <i aria-hidden="true" class="left arrow icon"></i>Let's Go Home</a>
-      </div>
-    
+      <script type="text/javascript">
+        $(function () {
+          $("#longer-{{ data.user_number }}").click(function () {
+            $(".longer-{{ data.user_number }}").modal('show');
+          });
+          $(".longer-{{ data.user_number }}").modal({
+            closable: true
+          });
+        });
+      </script>
+
+      {% endfor %}
+    </div>
+
+
+
+    <div class="ui padded horizontal divider">
+      <h4 class="ui header"><i aria-hidden="true" class="chart bar outline icon"></i>Chats & Summary</h4>
+    </div>
+
   
+
+    <div class="ui massive raised text middle container">
+      <div class="ui huge fluid vertical menu">
+        <div class="ui fluid black ribbon label segment" style="margin-left: +12px;">
+          <i class="comment outline icon"></i>Top Messenger
+        </div>
+        {% for data in context.user_data|sort(attribute='message_sent', reverse = True) %}
+        <div class="item">{{ data.author }} <div class="ui label">{{ data.message_sent }}</div>
+        </div>
+        {% endfor %}
+      </div>
     </div>
   </div>
-</body>
-</html>
+
+  {% include 'include/floatingbutton.html' %}
+
+  <style>
+    .text.ui.container {
+      padding: 2% !important;
+    }
+
+    .horizontal.ui.divider{
+      padding-bottom: 2% !important;
+    }
+    .centered.ui.cards{
+      padding-bottom: 3%;
+    }
+    .grid.ui.statistics {
+      padding: 1% !important;
+      align-items: center;
+      float: inline-end;
+    }
+  </style>
+
+      
+{% endblock %}
+

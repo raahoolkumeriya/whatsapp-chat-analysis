@@ -34,23 +34,8 @@ app = FastAPI(
     openapi_url="/api/v1/openapi.json"
 )
 
-
-app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
-
-statements = [
-    {"heading": "We care for your Privacy and we mean it.",
-    "symbol" : "inbox",
-    "description": "No. We are not saving any whatsapp chat export. As soon the uploaded file process it get deleted completely from uploaded location."
-    },
-    {"heading": "How it's working ?",
-    "symbol" : "setting",
-    "description": "Program script read the content and simply display in statstical format."
-    },
-    {"heading": "What to avoid and understand ?",
-    "symbol" : "stop",
-    "description": "Avoid Sensetive information | Avoid to upload Chat with media | No images or Video are consider for processing. | It's text processing techinque only."
-}]
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.get("/", response_class=HTMLResponse, tags=["Processor"])
@@ -58,7 +43,7 @@ async def main(request: Request):
     """
     Welcome Screen to upload exported chat
     """
-    return templates.TemplateResponse("index.html", {"request": request, "statements": statements})
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.get("/heartbeat/", response_class=HTMLResponse, tags=["Processor"])

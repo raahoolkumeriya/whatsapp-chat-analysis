@@ -1,125 +1,56 @@
-<html>
+{% extends "base.html" %}
 
-<head>
-  <script src="https://code.jquery.com/jquery-3.1.1.min.js"
-    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
-  <style>
-    .inputfile {
-      width: 0.1px;
-      height: 0.1px;
-      opacity: 0;
-      overflow: hidden;
-      position: absolute;
-      z-index: -1;
-    }
+{% block title %}Welcome{% endblock %}
 
-    @keyframes flash {
-      0% {
-        transform: translateY(0);
-      }
+{% block page_content %}
 
-      50% {
-        transform: translateY(0.5em);
-      }
+{% block head %}
+{{ super() }}
 
-      100% {
-        transform: translateY(0);
-      }
-    }
-  </style>
-</head>
+{% endblock %}
 
-<body>
+  {% include 'include/menu.html' %}
 
-
-  <div class="ui container">
-
-    <div class="ui hidden divider"></div>
-
-    <div class="ui secondary menu">
-      <a class="active item">
-        WhatsApp Chat Processor
-      </a>
-      <div class="right menu">
-        <a class="item" href="/heartbeat" style="animation:flash 1.5s ease-in-out infinite;">
-
-          <i class="heart red icon"></i> Heart Beat
-        </a>
-        <a class="item" href="/redoc" target="_blank">
-          API Documentation
-        </a>
-        <a class="item" href="/docs" target="_blank">
-          Swagger UI
-        </a>
-        <a class="ui item" href="https://codelocked.herokuapp.com/home/home/" target="_blank">
-          About
-        </a>
-      </div>
-    </div>
-
-    <div class="ui hidden divider"></div>
-
-    <div class="ui middle center aligned raised padded text container segment">
-
-      <h1 class="ui header">Want to see deep inside WhatsApp Chat</h1>
-
-      <form class="ui form fluid" action="/process_chat/" enctype="multipart/form-data" method="post">
-        <div class="ui fluid segment">
-
-          <div class="ui action fluid input positive right button">
-            <input name="file" type="file" />
-            <label for="file" class="ui green right button">
-              <i class="ui upload black icon"></i> <i class="whatsApp black icon"></i> Exported *txt file Only /-
-            </label>
+    <div class="ui massive raised text middle container segment">
+        
+        <h1 class="ui center aligned header">
+            Want to see deep inside WhatsApp Chat</h1>
+        <form class="ui form fluid" action="/process_chat/" enctype="multipart/form-data" method="post">
+        
+          <div class="ui fluid  raised stackable segment">
+            <div class="ui action fluid input positive right button">
+              <input name="file" type="file" />
+              <label for="file" class="ui green right button">
+                <i class="ui upload black icon"></i> <i class="whatsApp black icon"></i> *txt file Only
+              </label>
+            </div>
+            <div class="ui hidden divider"></div>
+        
+            <div class="ui fluid buttons">
+              <button type="submit" class="ui huge positive button"><i class="whatsApp icon"></i> Process Chat</button>
+            </div>
           </div>
+          <div class="ui fade error message"></div>
+        </form>
 
-          <div class="ui hidden divider"></div>
-
-          <div class="ui fluid buttons">
-            <button type="submit" class="ui huge positive button"><i class="whatsApp icon"></i> Process Chat</button>
-          </div>
-
-        </div>
-        <div class="ui fade error message"></div>
-
-      </form>
-
-    </div>
-
-    <h4 class="ui fluid center aligned header">
-      <img class="ui image" src="{{ url_for('static', path='/privacy.svg') }}">
-      <strong>Privacy Statement </strong> <i>- Everyone love & Own it.</i>
-      <div class="content">
       </div>
-    </h4>
-
-    {% for message in statements %}
-    <div class="ui icon small floating message">
-      <i class="{{ message.symbol }} icon"></i>
-      <div class="content">
-        <div class="header">
-          {{ message.heading }}
-        </div>
-        <p>{{ message.description }}</p>
-      </div>
-    </div>
-    {% endfor %}
-
-  </div>
 
 
 
+    <div class="ui divider container"></div>
 
-  <div style="position:fixed;margin:15em;bottom:0;right:0;animation:flash 1.5s ease-in-out infinite;z-index:6">
-    <a aria-current="page" class="ui button positive active leaf" role="button" href="/">
-      <i aria-hidden="true"></i>
+
+    {% include 'include/privacy.html' %}
+   
+
+
+
+  <div style="position:fixed;margin:3em;bottom:0;right:0;animation:flash 1.5s ease-in-out infinite;z-index:6">
+    <a aria-current="page" class="ui active leaf" href="/">
       
-      <form class="ui form fluid" action="/perform_demo/" enctype="multipart/form-data" method="post">
-        <div class="ui fluid segment">
-            <button type="submit" class="ui medium positive button">Demo</button>
-          </div>
+      <form class="ui form" action="/perform_demo/" enctype="multipart/form-data" method="post">
+            <button type="submit" class="ui large positive button">Demo</button> 
+        
       </form>
 
     </a>
@@ -127,7 +58,8 @@
 
 
   </div>
-  </div>
+  
+
   <script>
     $('.ui.form')
       .form({
@@ -137,7 +69,7 @@
             rules: [
               {
                 type: 'empty',
-                prompt: 'Please select without media exported chat in the *txt format only'
+                prompt: 'Please select <b>[without media]</b> exported chat in the <b>*txt format</b> only'
               }
             ]
           },
@@ -145,6 +77,88 @@
       });
   </script>
 
-</body>
 
-</html>
+<!-- Content JS HERE !-->
+<style>
+  .inputfile {
+      width: 0.1px;
+      height: 0.1px;
+      opacity: 0;
+      overflow: hidden;
+      position: absolute;
+      z-index: -1;
+    }
+  .segment.ui{
+    padding: 40px !important;
+    margin-bottom: 5%;
+  }
+
+  .container.ui{
+    margin-bottom: 3% !important;
+  }
+  h1.ui.center.header {
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+  h2.ui.center.header {
+    margin: 4em 0em 2em;
+  }
+  h3.ui.center.header {
+    margin-top: 1em;
+    padding: 1em 0em;
+  }
+</style>
+
+
+{% endblock %}
+
+
+{% block script %}
+
+    <script type="text/javascript">
+      $(document).ready(function() {
+      
+        var
+          $headers     = $('body > h3'),
+          $header      = $headers.first(),
+          ignoreScroll = false,
+          timer
+        ;
+      
+        // Preserve example in viewport when resizing browser
+        $(window)
+          .on('resize', function() {
+            // ignore callbacks from scroll change
+            clearTimeout(timer);
+            $headers.visibility('disable callbacks');
+      
+            // preserve position
+            $(document).scrollTop( $header.offset().top );
+      
+            // allow callbacks in 500ms
+            timer = setTimeout(function() {
+              $headers.visibility('enable callbacks');
+            }, 500);
+          })
+        ;
+        $headers
+          .visibility({
+            // fire once each time passed
+            once: false,
+      
+            // don't refresh position on resize
+            checkOnRefresh: true,
+      
+            // lock to this element on resize
+            onTopPassed: function() {
+              $header = $(this);
+            },
+            onTopPassedReverse: function() {
+              $header = $(this);
+            }
+          })
+        ;
+      });
+      </script>
+
+{% endblock %}
