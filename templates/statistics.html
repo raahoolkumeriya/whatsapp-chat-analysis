@@ -12,7 +12,7 @@
   {% include 'include/menu.html' %}
 
 
-    <div class="ui horizontal divider">
+    <div class="ui horizontal divider container">
       <h4 class="ui header"><i aria-hidden="true" class="chart pie icon"></i>Statistic</h4>
     </div>
 
@@ -49,14 +49,24 @@
     <div class="ui hidden divider"></div>
 
 
-    <div class="ui padded horizontal divider">
+    <div class="ui padded horizontal divider container">
+
       <h4 class="ui header"><i aria-hidden="true" class="braille icon"></i>Distribution</h4>
+      
     </div>
 
+
+    <div class="ui text container">
+      <h1 class="ui dividing header container">Content</h1>
+      <h3 class="first">Word Cloud</h3>
+      <p>The word cloud highlight popular words and phrases based on frequency and relevance for messenger.</b>.</p>
+      <p>Average words/message [ aw/m ], total Number of Emoji's, Media message and Links.</p>
+      
+    </div>
+
+
+
     <div class="ui hidden divider"></div>
-
-
-
 
     <div class="ui centered cards">
 
@@ -162,7 +172,7 @@
 
 
 
-    <div class="ui padded horizontal divider">
+    <div class="ui padded horizontal divider container">
       <h4 class="ui header"><i aria-hidden="true" class="chart bar outline icon"></i>Chats & Summary</h4>
     </div>
 
@@ -195,12 +205,14 @@
       padding-bottom: 3%;
     }
     .grid.ui.statistics {
-      padding: 1% !important;
+      padding: 3% !important;
       align-items: center;
       float: inline-end;
     }
   </style>
 
-      
-{% endblock %}
 
+{% include 'include/footer.html' %}
+
+
+{% endblock %}

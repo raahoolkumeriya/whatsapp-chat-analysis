@@ -15,6 +15,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from library.helpers import *
+
 tags_metadata = [
     {
         "name": "Demonstration",
@@ -44,6 +46,46 @@ async def main(request: Request):
     Welcome Screen to upload exported chat
     """
     return templates.TemplateResponse("index.html", {"request": request})
+
+
+
+
+@app.get("/display", response_class=HTMLResponse)
+async def main(request: Request):
+    context = {
+        "total_emojis": 100,
+        "total_messages": 1000,
+        "total_images": 123,
+        "total_link": 12,
+        "author_list": 12,
+        "user_data": [{"user_number": "1","avg_words_per_msg": "123",
+                "author": "Rahul Kumeriya","color": "red",
+                  "emojis_sent": 123,
+                  "message_sent": 222223,
+                  "media_msg": "223",
+                 "link_share": "2323" },
+                 {"user_number": "2","avg_words_per_msg": "123",
+                "author": "Rahul","color": "red",
+                  "emojis_sent": "123",
+                  "message_sent": 123,
+                  "media_msg": "223",
+                 "link_share": "2323" },
+                 {"user_number": "3","avg_words_per_msg": "123",
+                "author": "Kumeriya","color": "red",
+                  "emojis_sent": "123",
+                  "message_sent": 1123,
+                  "media_msg": "223",
+                 "link_share": "2323" },]
+
+    }
+    return templates.TemplateResponse("rahul.html", {"request": request,  "context": context})
+
+
+
+@app.get("/page/{page_name}", response_class=HTMLResponse)
+async def show_page(request: Request, page_name: str):
+    data = openfile(page_name+".md")
+    return templates.TemplateResponse("page.html", {"request": request, "data": data})
 
 
 @app.get("/heartbeat/", response_class=HTMLResponse, tags=["Processor"])

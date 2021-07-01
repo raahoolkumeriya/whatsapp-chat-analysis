@@ -9,3 +9,4 @@ jinja2==2.11.3
 pydantic==1.8.2
 emoji==1.2.0
 aiofiles==0.7.0
+markdown==3.3.4

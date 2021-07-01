@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block page_content %}
+
+{% block head %}
+{{ super() }}
+
+{% endblock %}
+
+  {% include 'include/menu.html' %}
+
+
+
+<main role="main" class="ui padded container segment">
+    <div class="row">
+        {{data.text|safe}}
+    </div>
+</main><!-- /.container -->
+
+{% include 'include/floatingbutton.html' %}
+
+{% endblock %}

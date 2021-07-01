@@ -15,70 +15,56 @@
         
         <h1 class="ui center aligned header">
             Want to see deep inside WhatsApp Chat</h1>
-        <form class="ui form fluid" action="/process_chat/" enctype="multipart/form-data" method="post">
-        
-          <div class="ui fluid  raised stackable segment">
-            <div class="ui action fluid input positive right button">
-              <input name="file" type="file" />
-              <label for="file" class="ui green right button">
-                <i class="ui upload black icon"></i> <i class="whatsApp black icon"></i> *txt file Only
-              </label>
-            </div>
-            <div class="ui hidden divider"></div>
-        
-            <div class="ui fluid buttons">
-              <button type="submit" class="ui huge positive button"><i class="whatsApp icon"></i> Process Chat</button>
-            </div>
-          </div>
-          <div class="ui fade error message"></div>
-        </form>
 
+
+            <form class="ui form fluid" action="/process_chat/" enctype="multipart/form-data" method="post">
+            
+              <div class="ui raised doubling segment inline middle aligned center aligned container">
+            
+                <div class="ui middle text centered">
+                  <input type="file" name="file"  class="inputfile" id="buttonlabel" />
+            
+                <label for="buttonlabel" class="ui large fluid red center aligned button">
+                  <i class="ui upload icon"></i> 
+                  Upload file
+                </label>
+
+                <div class="ui hidden divider"></div>
+
+                <div class="ui fluid buttons">
+                  <button type="submit" class="ui large fluid positive button">Process Chat</button>
+                </div>
+                </div>
+                <div class="ui fade error message"></div>
+              </form>
+  
       </div>
 
 
-
-    <div class="ui divider container"></div>
-
+    </div>
 
     {% include 'include/privacy.html' %}
    
 
 
+        <div style="position:fixed;margin:3em;bottom:0;right:0;animation:flash 1.5s ease-in-out infinite;z-index:6">
+          <a aria-current="page" class="ui active leaf" href="/">
+            
+            <form class="ui form" action="/perform_demo/" enctype="multipart/form-data" method="post">
+                  <button type="submit" class="ui large positive button">Demo</button>         
+            </form>
 
-  <div style="position:fixed;margin:3em;bottom:0;right:0;animation:flash 1.5s ease-in-out infinite;z-index:6">
-    <a aria-current="page" class="ui active leaf" href="/">
-      
-      <form class="ui form" action="/perform_demo/" enctype="multipart/form-data" method="post">
-            <button type="submit" class="ui large positive button">Demo</button> 
-        
-      </form>
-
-    </a>
-  </div>
+          </a>
+        </div>
 
 
   </div>
   
 
-  <script>
-    $('.ui.form')
-      .form({
-        fields: {
-          name: {
-            identifier: 'file',
-            rules: [
-              {
-                type: 'empty',
-                prompt: 'Please select <b>[without media]</b> exported chat in the <b>*txt format</b> only'
-              }
-            ]
-          },
-        }
-      });
-  </script>
+  {% include 'include/footer.html' %}
 
 
-<!-- Content JS HERE !-->
+<!-- Content CSS HERE !-->
 <style>
   .inputfile {
       width: 0.1px;
@@ -94,7 +80,7 @@
   }
 
   .container.ui{
-    margin-bottom: 3% !important;
+    margin-bottom: 4% !important;
   }
   h1.ui.center.header {
     margin-top: 1em;
@@ -107,6 +93,7 @@
     margin-top: 1em;
     padding: 1em 0em;
   }
+  
 </style>
 
 
@@ -115,50 +102,21 @@
 
 {% block script %}
 
-    <script type="text/javascript">
-      $(document).ready(function() {
-      
-        var
-          $headers     = $('body > h3'),
-          $header      = $headers.first(),
-          ignoreScroll = false,
-          timer
-        ;
-      
-        // Preserve example in viewport when resizing browser
-        $(window)
-          .on('resize', function() {
-            // ignore callbacks from scroll change
-            clearTimeout(timer);
-            $headers.visibility('disable callbacks');
-      
-            // preserve position
-            $(document).scrollTop( $header.offset().top );
-      
-            // allow callbacks in 500ms
-            timer = setTimeout(function() {
-              $headers.visibility('enable callbacks');
-            }, 500);
-          })
-        ;
-        $headers
-          .visibility({
-            // fire once each time passed
-            once: false,
-      
-            // don't refresh position on resize
-            checkOnRefresh: true,
-      
-            // lock to this element on resize
-            onTopPassed: function() {
-              $header = $(this);
-            },
-            onTopPassedReverse: function() {
-              $header = $(this);
+<script>
+  $('.ui.form')
+    .form({
+      fields: {
+        name: {
+          identifier: 'file',
+          rules: [
+            {
+              type: 'empty',
+              prompt: 'Please upload <b>[without media exported chat]</b> in the <b>*txt format</b> only'
             }
-          })
-        ;
-      });
-      </script>
+          ]
+        },
+      }
+    });
+</script>
 
 {% endblock %}
