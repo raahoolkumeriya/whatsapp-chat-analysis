@@ -48,8 +48,6 @@ async def main(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
-
-
 @app.get("/display", response_class=HTMLResponse)
 async def main(request: Request):
     context = {
@@ -78,7 +76,7 @@ async def main(request: Request):
                  "link_share": "2323" },]
 
     }
-    return templates.TemplateResponse("rahul.html", {"request": request,  "context": context})
+    return templates.TemplateResponse("statistics.html", {"request": request,  "context": context})
 
 
 
@@ -112,78 +110,41 @@ async def page_not_found_404(request: Request):
 async def processing(chat_file):
     if chat_file:
         chat = WhatsAppChatAnalysis()
-        # Call Process chat with input as exported file
-        data = chat.process_chat(chat_file)
-
-        #----  EDA   -----------------
-        df = pd.DataFrame(data, columns=["Date", 'Time', 'Author', 'Message'])
-        # Convert Date into panda datetime format
-        df['Date'] = pd.to_datetime(df['Date'])
-
-        df['emoji'] = df["Message"].apply(chat.extract_emojis)
-        emojis = sum(df['emoji'].str.len())
-        # print("Total Emoji's Used : ", emojis)
+        df = chat.convert_raw_to_dataframe_data(chat_file)
+        # Get total message
         
-        # print(df.info())
-        # print(df.Author.unique())
-
         total_messages = df.shape[0]
-        # print(total_messages)
+        # Get Total numbr of Emojis
+        total_emojis = len(list(set([a for b in df.Emojis for a in b])))
+        # total link shared
+        total_media = np.sum(df.Media)
+        # total links
+        total_link = np.sum(df.Urlcount)
+        # Total Author
+        author_list = df.Author.unique() 
 
-        image_messages = len(df[df['Message'].str.contains("image omitted")])
-
-        # Link Shared
-        URLPATTERN = r'(https?://\S+)'
-        df['urlcount'] = df.Message.apply(lambda x: re.findall(URLPATTERN, x)).str.len()
-        links = np.sum(df.urlcount)
-
-        author_list = [author for author in df["Author"].unique() if author is not None ]
-
-        media_messages_df = df[df['Message'].str.contains("image omitted")]
-        messages_df = df.drop(media_messages_df.index)
-        messages_df['Letter_Count'] = messages_df['Message'].apply(lambda s : len(s))
-        messages_df['Word_Count'] = messages_df['Message'].apply(lambda s : len(s.split(' ')))
-        messages_df["MessageCount"]=1
-
-        author_list = [author for author in df["Author"].unique() if author is not None ]
-
-        # wordcloud_array = []
         # Generate Word Cloud
         for i in range(len(author_list)):
-            dummy_df = messages_df[messages_df['Author'] == author_list[i]]
+            dummy_df = df[df['Author'] == author_list[i]]
             text = " ".join(review for review in dummy_df.Message)
-            # print('Words by',author_list[i])
             if len(text) > 0:
                 wordcloud_return = chat.generate_word_cloud(text)
-                # wordcloud_array.append(wordcloud_return)
-                # chat.generate_report(user_df, media_messages_df, author)
-                user_data = chat.get_user_json_data(i+1, dummy_df, media_messages_df, author_list[i], wordcloud_return)
+                user_data = chat.get_user_json_data(i+1, dummy_df, df, author_list[i], wordcloud_return)
                 result = chat.formation_of_complete_data(user_data)
             else:
                 wordcloud_return = chat.generate_word_cloud('Zero')
-                #wordcloud_array.append(wordcloud_return)
-                # chat.generate_report(user_df, media_messages_df, author)
-                user_data = chat.get_user_json_data(i+1, dummy_df, media_messages_df, author_list[i], wordcloud_return)
+                user_data = chat.get_user_json_data(i+1, dummy_df, df, author_list[i], wordcloud_return)
                 result = chat.formation_of_complete_data(user_data)        
-
-
-        total_emojis_list = list([a for b in messages_df.emoji for a in b])
-        emoji_dict = dict(Counter(total_emojis_list))
-        emoji_dict = sorted(emoji_dict.items(), key=lambda x: x[1], reverse=True)
-
-        # emoji_df = pd.DataFrame(emoji_dict, columns=['emoji', 'count'])
-        # pie_return = chat.emoji_pie_chat(emoji_df)
         
         context = {
-            "total_emojis": emojis,
+            "total_emojis": total_emojis,
             "total_messages": total_messages,
-            "total_images": image_messages,
-            "total_link": links,
+            "total_images": total_media,
+            "total_link": total_link,
             "author_list": len(author_list),
             "user_data": result,
 
         }
-        # pie_return.show()
         return context
 
 @app.post("/process_chat/", tags=["Processor"])

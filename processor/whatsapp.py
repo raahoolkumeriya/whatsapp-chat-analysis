@@ -5,6 +5,7 @@ import urllib
 import base64
 import shutil
 import numpy as np
+import pandas as pd
 # from random import choice
 import matplotlib.pyplot as plt
 plt.rcParams.update({'figure.max_open_warning': 0})
@@ -16,60 +17,9 @@ class WhatsAppChatAnalysis:
     To dip dive into analysis of WhatApp Chat
     """
     def __init__(self):
-        # Regex pattern for WhatsApp version 2.21.11.15
-        self.pattern = '^\[([0-9]+)(\/)([0-9]+)(\/)([0-9]+), ([0-9]+):([0-9]+):([0-9]+)[ ]?(AM|PM|am|pm)?\]'
+        self.group_name = ""
+        self.URLPATTERN = r'(https?://\S+)'
         self.result = []
-
-    def parse_date_time(self,string):
-        """Parse the Date and Time with regex match"""
-        if re.match(self.pattern, string):
-            return True
-        return False
-    
-    def find_author(self,string):
-        """Find the Author in String"""
-        if len(string.split(":",1)) == 2:
-            return True
-        else:
-            return False
-        
-    def parse_message(self,line):
-        """ Parse the raw message into chunks"""
-        splitline, split_message = line.split(']', 1)
-        splitdate, splittime = splitline.split(",",1)
-        date = splitdate.strip('[')
-        time = splittime.strip()
-        message = split_message.strip()
-        if self.find_author(message):
-            splitmessage = message.split(":",1)
-            author = splitmessage[0]
-            message = " ".join(splitmessage[1:])
-        else:
-            author= None
-        return date, time, author, message
-    
-    def process_chat(self,exported_chat_file):
-        """ Process the export file from whatsapp"""
-        data = []
-        with open(exported_chat_file, encoding="utf-8") as fp:
-            fp.readline()
-            messageBuffer = []
-            date, time, author = None, None, None
-            while True:
-                line = fp.readline()
-                if not line:
-                    break
-                line = line.strip()
-                if self.parse_date_time(line):
-                    if len(messageBuffer) > 0:
-                        data.append([date, time, author, ''.join(messageBuffer)])
-                    messageBuffer.clear()
-                    date, time, author,message = self.parse_message(line)
-                    messageBuffer.append(message)
-                else:
-                    messageBuffer.append(line)
-        return data
-
 
     def extract_emojis(self, s):
         """Extract emojis from message string"""
@@ -112,8 +62,8 @@ class WhatsAppChatAnalysis:
         subdict["message_sent"] = dataframe.shape[0]
         subdict["avg_words_per_msg"] = '{:.2f}'.format((np.sum(dataframe['Word_Count']))/dataframe.shape[0])
         subdict["media_msg"] = media_messages_df[media_messages_df['Author'] == author].shape[0]
-        subdict["emojis_sent"] = sum(dataframe['emoji'].str.len())
-        subdict["link_share"] = sum(dataframe["urlcount"])
+        subdict["emojis_sent"] = sum(dataframe['Emojis'].str.len())
+        subdict["link_share"] = sum(dataframe["Urlcount"])
         subdict["word_cloud"] = wordcloud_string
         return subdict
 
@@ -133,3 +83,81 @@ class WhatsAppChatAnalysis:
             return "Permission denied."
         except:
             return "Error occurred while copying file."
+
+    def convert_raw_to_dataframe_data(self,exported_chat_file):
+        """ Process the export file from whatsapp"""
+        with open(exported_chat_file,'r', encoding = 'utf-8') as file:
+            data = file.read()
+        
+        regex_string = re.findall('(\[\d+/\d+/\d+, \d+:\d+:\d+ [A-Z]*\]) (.*?): (.*)', data)
+        # Convert list to dataframe and name teh columns
+        raw_df = pd.DataFrame(regex_string,columns=['DateTime','Author','Message'])
+        # Convert to dataframe date
+        raw_df['DateTime'] = pd.to_datetime(raw_df['DateTime'],format="[%d/%m/%y, %H:%M:%S %p]")
+        # Splitting Date and Time 
+        raw_df['Date'] = pd.to_datetime(raw_df['DateTime']).dt.date
+        raw_df['Time'] = pd.to_datetime(raw_df['DateTime']).dt.time
+        # Drop DateTime Column
+        raw_df.drop('DateTime',axis='columns', inplace=True)
+        # Drop NAN Values 
+        raw_df = raw_df.dropna()
+        raw_df = raw_df.reset_index(drop=True)
+        # Handling *Messages and calls are end-to-end encrypted* 
+        self.group_name = raw_df.iloc[0:1]['Author'][0]
+        new_df = raw_df.iloc[1: , :]
+        # Handle EMojis
+        new_df = new_df.assign(Emojis=new_df["Message"].apply(self.extract_emojis))
+        # Handle Links
+        new_df = new_df.assign(Urlcount=new_df["Message"].apply(lambda x: re.findall(self.URLPATTERN, x)).str.len())
+        # Handle Image ommited
+        new_df = new_df.assign(Media=new_df['Message'].apply(lambda x: re.findall("image omitted", x)).str.len())
+        
+        # Handling wordCount         
+        media_messages_df = new_df[new_df['Message'].str.contains("image omitted")]
+        messages_df = new_df.drop(media_messages_df.index)
+        messages_df['Letter_Count'] = messages_df['Message'].apply(lambda s : len(s))
+        messages_df['Word_Count'] = messages_df['Message'].apply(lambda s : len(s.split(' ')))
+        
+        return messages_df
+    
+    
+# if __name__ == "__main__":
+#     chat = WhatsAppChatAnalysis()
+#     chat_file = 'dummy_chat.txt'
+#     if chat_file:
+#         df = chat.convert_raw_to_dataframe_data(chat_file)
+#         # Get total message
+        
+#         total_messages = df.shape[0]
+#         # Get Total numbr of Emojis
+#         total_emojis = len(list(set([a for b in df.Emojis for a in b])))
+#         # total link shared
+#         total_media = np.sum(df.Media)
+#         # total links
+#         total_link = np.sum(df.Urlcount)
+#         # Total Author
+#         author_list = df.Author.unique() 
+
+#         # Generate Word Cloud
+#         for i in range(len(author_list)):
+#             dummy_df = df[df['Author'] == author_list[i]]
+#             text = " ".join(review for review in dummy_df.Message)
+#             if len(text) > 0:
+#                 wordcloud_return = chat.generate_word_cloud(text)
+#                 user_data = chat.get_user_json_data(i+1, dummy_df, df, author_list[i], wordcloud_return)
+#                 result = chat.formation_of_complete_data(user_data)
+#             else:
+#                 wordcloud_return = chat.generate_word_cloud('Zero')
+#                 user_data = chat.get_user_json_data(i+1, dummy_df, df, author_list[i], wordcloud_return)
+#                 result = chat.formation_of_complete_data(user_data)        
+        
+#         context = {
+#             "total_emojis": total_emojis,
+#             "total_messages": total_messages,
+#             "total_images": total_media,
+#             "total_link": total_link,
+#             "author_list": len(author_list),
+#             "user_data": result,
+
+#         }
+#         print(context)
