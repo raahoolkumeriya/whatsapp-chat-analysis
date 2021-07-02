@@ -88,11 +88,20 @@ class WhatsAppChatAnalysis:
         """ Process the export file from whatsapp"""
         with open(exported_chat_file,'r', encoding = 'utf-8') as file:
             data = file.read()
-        regex_string = re.findall('(\d+/\d+/\d+, \d+:\d+\d+ [a-zA-Z]*) - (.*?): (.*)|(\[\d+/\d+/\d+, \d+:\d+:\d+ [A-Z]*\]) (.*?): (.*)', data)
+        regex_iphone = re.findall('(\[\d+/\d+/\d+, \d+:\d+:\d+ [A-Z]*\]) (.*?): (.*)', data)
+        if regex_iphone:
+            regex_string = regex_iphone
+        regex_android = re.findall('(\d+/\d+/\d+, \d+:\d+\d+ [a-zA-Z]*) - (.*?): (.*)', data)
+        if regex_android:
+            regex_string = regex_android
+        
         # Convert list to dataframe and name teh columns
         raw_df = pd.DataFrame(regex_string,columns=['DateTime','Author','Message'])
         # Convert to dataframe date
-        raw_df['DateTime'] = pd.to_datetime(raw_df['DateTime'],format="[%d/%m/%y, %H:%M:%S %p]")
+        if regex_iphone:
+            raw_df['DateTime'] = pd.to_datetime(raw_df['DateTime'],format="[%d/%m/%y, %H:%M:%S %p]")
+        if regex_android:
+            raw_df['DateTime'] = pd.to_datetime(raw_df['DateTime'],format="%d/%m/%y, %H:%M %p")
         # Splitting Date and Time 
         raw_df['Date'] = pd.to_datetime(raw_df['DateTime']).dt.date
         raw_df['Time'] = pd.to_datetime(raw_df['DateTime']).dt.time
@@ -120,43 +129,43 @@ class WhatsAppChatAnalysis:
         return messages_df
 
     
-if __name__ == "__main__":
-    chat = WhatsAppChatAnalysis()
-    chat_file = 'dummy_chat.txt'
-    if chat_file:
-        df = chat.convert_raw_to_dataframe_data(chat_file)
-        # Get total message
+# if __name__ == "__main__":
+#     chat = WhatsAppChatAnalysis()
+#     chat_file = 'dummy_chat.txt'
+#     if chat_file:
+#         df = chat.convert_raw_to_dataframe_data(chat_file)
+#         # Get total message
         
-        total_messages = df.shape[0]
-        # Get Total numbr of Emojis
-        total_emojis = len(list(set([a for b in df.Emojis for a in b])))
-        # total link shared
-        total_media = np.sum(df.Media)
-        # total links
-        total_link = np.sum(df.Urlcount)
-        # Total Author
-        author_list = df.Author.unique() 
+#         total_messages = df.shape[0]
+#         # Get Total numbr of Emojis
+#         total_emojis = len(list(set([a for b in df.Emojis for a in b])))
+#         # total link shared
+#         total_media = np.sum(df.Media)
+#         # total links
+#         total_link = np.sum(df.Urlcount)
+#         # Total Author
+#         author_list = df.Author.unique() 
 
-        # Generate Word Cloud
-        for i in range(len(author_list)):
-            dummy_df = df[df['Author'] == author_list[i]]
-            text = " ".join(review for review in dummy_df.Message)
-            if len(text) > 0:
-                wordcloud_return = chat.generate_word_cloud(text)
-                user_data = chat.get_user_json_data(i+1, dummy_df, df, author_list[i], wordcloud_return)
-                result = chat.formation_of_complete_data(user_data)
-            else:
-                wordcloud_return = chat.generate_word_cloud('Zero')
-                user_data = chat.get_user_json_data(i+1, dummy_df, df, author_list[i], wordcloud_return)
-                result = chat.formation_of_complete_data(user_data)        
+#         # Generate Word Cloud
+#         for i in range(len(author_list)):
+#             dummy_df = df[df['Author'] == author_list[i]]
+#             text = " ".join(review for review in dummy_df.Message)
+#             if len(text) > 0:
+#                 wordcloud_return = chat.generate_word_cloud(text)
+#                 user_data = chat.get_user_json_data(i+1, dummy_df, df, author_list[i], wordcloud_return)
+#                 result = chat.formation_of_complete_data(user_data)
+#             else:
+#                 wordcloud_return = chat.generate_word_cloud('Zero')
+#                 user_data = chat.get_user_json_data(i+1, dummy_df, df, author_list[i], wordcloud_return)
+#                 result = chat.formation_of_complete_data(user_data)        
         
-        context = {
-            "total_emojis": total_emojis,
-            "total_messages": total_messages,
-            "total_images": total_media,
-            "total_link": total_link,
-            "author_list": len(author_list),
-            "user_data": result,
+#         context = {
+#             "total_emojis": total_emojis,
+#             "total_messages": total_messages,
+#             "total_images": total_media,
+#             "total_link": total_link,
+#             "author_list": len(author_list),
+#             "user_data": result,
 
-        }
-        print(context)
+#         }
+#         print(context)
