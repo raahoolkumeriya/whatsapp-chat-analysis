@@ -88,8 +88,7 @@ class WhatsAppChatAnalysis:
         """ Process the export file from whatsapp"""
         with open(exported_chat_file,'r', encoding = 'utf-8') as file:
             data = file.read()
-        
-        regex_string = re.findall('(\[\d+/\d+/\d+, \d+:\d+:\d+ [A-Z]*\]) (.*?): (.*)', data)
+        regex_string = re.findall('(\d+/\d+/\d+, \d+:\d+\d+ [a-zA-Z]*) - (.*?): (.*)|(\[\d+/\d+/\d+, \d+:\d+:\d+ [A-Z]*\]) (.*?): (.*)', data)
         # Convert list to dataframe and name teh columns
         raw_df = pd.DataFrame(regex_string,columns=['DateTime','Author','Message'])
         # Convert to dataframe date
@@ -119,45 +118,45 @@ class WhatsAppChatAnalysis:
         messages_df['Word_Count'] = messages_df['Message'].apply(lambda s : len(s.split(' ')))
         
         return messages_df
-    
-    
-# if __name__ == "__main__":
-#     chat = WhatsAppChatAnalysis()
-#     chat_file = 'dummy_chat.txt'
-#     if chat_file:
-#         df = chat.convert_raw_to_dataframe_data(chat_file)
-#         # Get total message
-        
-#         total_messages = df.shape[0]
-#         # Get Total numbr of Emojis
-#         total_emojis = len(list(set([a for b in df.Emojis for a in b])))
-#         # total link shared
-#         total_media = np.sum(df.Media)
-#         # total links
-#         total_link = np.sum(df.Urlcount)
-#         # Total Author
-#         author_list = df.Author.unique() 
 
-#         # Generate Word Cloud
-#         for i in range(len(author_list)):
-#             dummy_df = df[df['Author'] == author_list[i]]
-#             text = " ".join(review for review in dummy_df.Message)
-#             if len(text) > 0:
-#                 wordcloud_return = chat.generate_word_cloud(text)
-#                 user_data = chat.get_user_json_data(i+1, dummy_df, df, author_list[i], wordcloud_return)
-#                 result = chat.formation_of_complete_data(user_data)
-#             else:
-#                 wordcloud_return = chat.generate_word_cloud('Zero')
-#                 user_data = chat.get_user_json_data(i+1, dummy_df, df, author_list[i], wordcloud_return)
-#                 result = chat.formation_of_complete_data(user_data)        
+    
+if __name__ == "__main__":
+    chat = WhatsAppChatAnalysis()
+    chat_file = 'dummy_chat.txt'
+    if chat_file:
+        df = chat.convert_raw_to_dataframe_data(chat_file)
+        # Get total message
         
-#         context = {
-#             "total_emojis": total_emojis,
-#             "total_messages": total_messages,
-#             "total_images": total_media,
-#             "total_link": total_link,
-#             "author_list": len(author_list),
-#             "user_data": result,
+        total_messages = df.shape[0]
+        # Get Total numbr of Emojis
+        total_emojis = len(list(set([a for b in df.Emojis for a in b])))
+        # total link shared
+        total_media = np.sum(df.Media)
+        # total links
+        total_link = np.sum(df.Urlcount)
+        # Total Author
+        author_list = df.Author.unique() 
 
-#         }
-#         print(context)
+        # Generate Word Cloud
+        for i in range(len(author_list)):
+            dummy_df = df[df['Author'] == author_list[i]]
+            text = " ".join(review for review in dummy_df.Message)
+            if len(text) > 0:
+                wordcloud_return = chat.generate_word_cloud(text)
+                user_data = chat.get_user_json_data(i+1, dummy_df, df, author_list[i], wordcloud_return)
+                result = chat.formation_of_complete_data(user_data)
+            else:
+                wordcloud_return = chat.generate_word_cloud('Zero')
+                user_data = chat.get_user_json_data(i+1, dummy_df, df, author_list[i], wordcloud_return)
+                result = chat.formation_of_complete_data(user_data)        
+        
+        context = {
+            "total_emojis": total_emojis,
+            "total_messages": total_messages,
+            "total_images": total_media,
+            "total_link": total_link,
+            "author_list": len(author_list),
+            "user_data": result,
+
+        }
+        print(context)
