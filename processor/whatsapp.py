@@ -1,4 +1,5 @@
 import io
+import os
 import re
 import emoji
 import urllib
@@ -34,12 +35,27 @@ class WhatsAppChatAnalysis:
         image_64 = 'data:image/png;base64,' + urllib.parse.quote(string)
         return image_64
         
+    def add_multilingual_stopwords(self):
+        multilingul_list = []
+        for file in os.listdir('stopwords'):
+            stopword = open('stopwords/' + file, "r")
+            for word in stopword:
+                word = re.sub('[\n]', '', word)
+                multilingul_list.append(word)
+        return multilingul_list
+
+
     def generate_word_cloud(self,text):
         """Generate Word Cloud"""
         # print ("There are {} words in all the messages.".format(len(text)))
-        stopwords = set(STOPWORDS)
+        stopwords = set(STOPWORDS).union(set(self.add_multilingual_stopwords()))
         # Generate a word cloud image
-        wordcloud = WordCloud(stopwords=stopwords, background_color="white").generate(text)
+        wordcloud = WordCloud(
+                stopwords=stopwords, 
+                random_state=1,
+                collocations=False,
+                font_path='Laila-Regular.ttf',
+                background_color="white").generate(text)
         # Display the generated image:
         # the matplotlib way:
         plt.figure( figsize=(10,5))
@@ -94,7 +110,6 @@ class WhatsAppChatAnalysis:
         regex_android = re.findall('(\d+/\d+/\d+, \d+:\d+\d+ [a-zA-Z]*) - (.*?): (.*)', data)
         if regex_android:
             regex_string = regex_android
-        
         # Convert list to dataframe and name teh columns
         raw_df = pd.DataFrame(regex_string,columns=['DateTime','Author','Message'])
         # Convert to dataframe date
@@ -125,8 +140,10 @@ class WhatsAppChatAnalysis:
         messages_df = new_df.drop(media_messages_df.index)
         messages_df['Letter_Count'] = messages_df['Message'].apply(lambda s : len(s))
         messages_df['Word_Count'] = messages_df['Message'].apply(lambda s : len(s.split(' ')))
-        
-        return messages_df
+        cloud_df = messages_df[messages_df["Message"].str.contains\
+                ("<Media omitted>|This message was deleted|You deleted this message|Missed voice call|Missed video call")==False]
+
+        return cloud_df
 
     
 # if __name__ == "__main__":
@@ -147,6 +164,45 @@ class WhatsAppChatAnalysis:
 #         author_list = df.Author.unique() 
 
 #         # Generate Word Cloud
+#     chat = WhatsAppChatAnalysis()
+#     chat_file = 'dummy_chat.txt'
+#     if chat_file:
+#         df = chat.convert_raw_to_dataframe_data(chat_file)
+#         # Get total message
+        
+#         total_messages = df.shape[0]
+#         # Get Total numbr of Emojis
+#         total_emojis = len(list(set([a for b in df.Emojis for a in b])))
+#         # total link shared
+#         total_media = np.sum(df.Media)
+#         # total links
+#         total_link = np.sum(df.Urlcount)
+#         # Total Author
+#         author_list = df.Author.unique() 
+
+#         # Generate Word Cloud
+#         for i in range(len(author_list)):
+#             dummy_df = df[df['Author'] == author_list[i]]
+#             text = " ".join(review for review in dummy_df.Message)
+#             if len(text) > 0:
+#                 wordcloud_return = chat.generate_word_cloud(text)
+#                 user_data = chat.get_user_json_data(i+1, dummy_df, df, author_list[i], wordcloud_return)
+#                 result = chat.formation_of_complete_data(user_data)
+#             else:
+#                 wordcloud_return = chat.generate_word_cloud('Zero')
+#                 user_data = chat.get_user_json_data(i+1, dummy_df, df, author_list[i], wordcloud_return)
+#                 result = chat.formation_of_complete_data(user_data)        
+        
+#         context = {
+#             "total_emojis": total_emojis,
+#             "total_messages": total_messages,
+#             "total_images": total_media,
+#             "total_link": total_link,
+#             "author_list": len(author_list),
+#             "user_data": result,
+
+#         }
+#         print(context)
 #         for i in range(len(author_list)):
 #             dummy_df = df[df['Author'] == author_list[i]]
 #             text = " ".join(review for review in dummy_df.Message)
