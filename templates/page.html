@@ -9,14 +9,14 @@
 
 {% endblock %}
 
-  {% include 'include/menu.html' %}
+{% include 'include/menu.html' %}
 
 
 
 <main role="main" class="ui padded container segment">
-    <div class="row">
-        {{data.text|safe}}
-    </div>
+  <div class="row">
+    {{data.text|safe}}
+  </div>
 </main><!-- /.container -->
 
 {% include 'include/floatingbutton.html' %}

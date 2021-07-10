@@ -2,57 +2,65 @@
 <html lang="en">
 
 <head>
-    {% block head %}
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="WhatsApp Chat Processor">
-    <meta name="author" content="Rahul Kumeriya">
+  {% block head %}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="WhatsApp Chat Processor">
+  <meta name="author" content="Rahul Kumeriya">
 
-    <title>{% block title %}{% endblock %} | WhatsApp Chat Processor</title>
-    <link rel="icon" href="{{ url_for('static', path='/favicon.png') }}" sizes="32x32" />
+  <title>{% block title %}{% endblock %} | WhatsApp Chat Processor</title>
+  <link rel="icon" href="{{ url_for('static', path='/favicon.png') }}" sizes="32x32" />
 
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"
     integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
 
 
 
   <style>
-  
     .container {
-        padding: 30px;
-      }
+      padding: 30px;
+    }
+
     @keyframes flash {
-      0% {transform: translateY(0);}
-      50% {transform: translateY(0.5em);}
-      100% {transform: translateY(0);}
+      0% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(0.5em);
+      }
+
+      100% {
+        transform: translateY(0);
+      }
     }
   </style>
 
-    {% endblock %}
+  {% endblock %}
 </head>
 
 <body>
 
-    {% block page_content %}
-    
-    {% endblock %}
+  {% block page_content %}
 
-    {% block script %}
+  {% endblock %}
 
-    <script>
-      $(document)
-        .ready(function () {
-          $('.autumn.leaf')
-            .transition('set looping')
-            .transition('pulse', '2000ms')
-        });
-  
-    </script>
-    
-    {% endblock %}
+  {% block script %}
+
+  <script>
+    $(document)
+      .ready(function () {
+        $('.autumn.leaf')
+          .transition('set looping')
+          .transition('pulse', '2000ms')
+      });
+
+  </script>
+
+  {% endblock %}
 
 </body>
 

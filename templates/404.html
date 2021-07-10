@@ -4,32 +4,32 @@
 
 {% block page_content %}
 
-  {% block head %}
-  {{ super() }}
+{% block head %}
+{{ super() }}
 
-  {% endblock %}
+{% endblock %}
 
 
-  <div class="ui middle container aligned">
+<div class="ui middle container aligned">
 
-    <div class="ui  middle centered grid slogan">
-      <img class="ui image autumn leaf" src="{{ url_for('static', path='404.svg') }}">
-    </div>
+  <div class="ui  middle centered grid slogan">
+    <img class="ui image autumn leaf" src="{{ url_for('static', path='404.svg') }}">
+  </div>
 
-    {% include 'include/floatingbutton.html' %}
-   
-    </div>
+  {% include 'include/floatingbutton.html' %}
 
-  {% endblock %}
+</div>
 
-  {% block script %}
-  <script>
-    $(document)
-      .ready(function () {
-        $('.autumn.leaf')
-          .transition('set looping')
-          .transition('pulse', '2000ms')
-      });
+{% endblock %}
 
-  </script>
+{% block script %}
+<script>
+  $(document)
+    .ready(function () {
+      $('.autumn.leaf')
+        .transition('set looping')
+        .transition('pulse', '2000ms')
+    });
+
+</script>
 {% endblock %}

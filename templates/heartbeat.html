@@ -1,57 +1,56 @@
-
 {% extends "base.html" %}
 
 {% block title %}Heartbeat{% endblock %}
 
 {% block page_content %}
 
-  {% block head %}
-  {{ super() }}
+{% block head %}
+{{ super() }}
+
+{% endblock %}
+
+
+{% include 'include/menu.html' %}
+
+
+<div class="ui middle container  aligned">
+
+
+
+  <div class="ui massive middle aligned center aligned grid slogan">
+    <img class="ui circular image autumn leaf" src="{{ url_for('static', path='heartbeat.svg') }}">
+  </div>
+
+  <div>
+  </div>
+
+  <div class="ui hidden divider"></div>
+
+
+  {% include 'include/floatingbutton.html' %}
+
+
+  <div style="position:fixed;margin:+10%;bottom:0;left:0;z-index:6">
+
+    <div class="ui buttons">
+      <button class="ui positive button" data-tooltip=" write to: rahul.kumeriya@outlook.com"
+        data-position="top center">
+        <i class="envelope icon"></i></button>
+      <div class="or"></div>
+      <a target="_blank" class="ui twitter button" role="button" href="https://twitter.com/kumeriyaRahul"
+        data-tooltip="DM to: @KumeriyaRahul" data-position="top center">
+        <i aria-hidden="true" class="twitter icon"></i></a>
+      <div class="or"></div>
+      <a target="_blank" class="ui secondary button" role="button" href="https://github.com/raahoolkumeriya"
+        data-tooltip="source code on github/raahoolkumeriya" data-position="top center">
+        <i aria-hidden="true" class="github icon"></i></a>
+    </div>
+  </div>
 
   {% endblock %}
 
-
-  {% include 'include/menu.html' %}
-
-  
-    <div class="ui middle container  aligned">
-
-   
-
-    <div class="ui massive middle aligned center aligned grid slogan">
-      <img class="ui circular image autumn leaf" src="{{ url_for('static', path='heartbeat.svg') }}">
-    </div>
-
-    <div>
-    </div>
-
-    <div class="ui hidden divider"></div>
-    
-    
-    {% include 'include/floatingbutton.html' %}
+  {% block scripts %}
+  {{ super() }}
 
 
-    <div style="position:fixed;margin:+10%;bottom:0;left:0;z-index:6">
-
-      <div class="ui buttons">
-        <button class="ui positive button" data-tooltip=" write to: rahul.kumeriya@outlook.com"
-          data-position="top center">
-          <i class="envelope icon"></i></button>
-        <div class="or"></div>
-        <a target="_blank" class="ui twitter button" role="button" href="https://twitter.com/kumeriyaRahul"
-          data-tooltip="DM to: @KumeriyaRahul" data-position="top center">
-          <i aria-hidden="true" class="twitter icon"></i></a>
-        <div class="or"></div>
-        <a target="_blank" class="ui secondary button" role="button" href="https://github.com/raahoolkumeriya"
-          data-tooltip="source code on github/raahoolkumeriya" data-position="top center">
-          <i aria-hidden="true" class="github icon"></i></a>
-      </div>
-    </div>
-
-{% endblock %}
-
-{% block scripts %}
-{{ super() }}
-
-
-{% endblock %}
+  {% endblock %}

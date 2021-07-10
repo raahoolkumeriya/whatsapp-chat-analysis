@@ -9,91 +9,94 @@
 
 {% endblock %}
 
-  {% include 'include/menu.html' %}
+{% include 'include/menu.html' %}
 
-    <div class="ui massive raised text middle container segment">
-        
-        <h1 class="ui center aligned header">
-            Want to see deep inside WhatsApp Chat</h1>
+<div class="ui massive raised text middle container segment">
 
-
-            <form class="ui form fluid" action="/process_chat/" enctype="multipart/form-data" method="post">
-            
-              <div class="ui raised doubling segment inline middle aligned center aligned container">
-            
-                <div class="ui middle text centered">
-                  <input type="file" name="file"  class="inputfile" id="buttonlabel" />
-            
-                <label for="buttonlabel" class="ui large fluid red center aligned button">
-                  <i class="ui upload icon"></i> 
-                  Upload file
-                </label>
-
-                <div class="ui hidden divider"></div>
-
-                <div class="ui fluid buttons">
-                  <button type="submit" class="ui large fluid positive button">Process Chat</button>
-                </div>
-                </div>
-                <div class="ui fade error message"></div>
-              </form>
-  
-      </div>
+  <h1 class="ui center aligned header">
+    Want to see deep inside WhatsApp Chat</h1>
 
 
-    </div>
+  <form class="ui form fluid" action="/process_chat/" enctype="multipart/form-data" method="post">
 
-    {% include 'include/privacy.html' %}
-   
+    <div class="ui raised doubling segment inline middle aligned center aligned container">
 
+      <div class="ui middle text centered">
+        <input type="file" name="file" class="inputfile" id="buttonlabel" />
 
-        <div style="position:fixed;margin:3em;bottom:0;right:0;animation:flash 1.5s ease-in-out infinite;z-index:6">
-          <a aria-current="page" class="ui active leaf" href="/">
-            
-            <form class="ui form" action="/perform_demo/" enctype="multipart/form-data" method="post">
-                  <button type="submit" class="ui large positive button">Demo</button>         
-            </form>
+        <label for="buttonlabel" class="ui large fluid red center aligned button">
+          <i class="ui upload icon"></i>
+          Upload file
+        </label>
 
-          </a>
+        <div class="ui hidden divider"></div>
+
+        <div class="ui fluid buttons">
+          <button type="submit" class="ui large fluid positive button">Process Chat</button>
         </div>
+      </div>
+      <div class="ui fade error message"></div>
+  </form>
+
+</div>
 
 
-  </div>
-  
+</div>
 
-  {% include 'include/footer.html' %}
+{% include 'include/privacy.html' %}
+
+
+
+<div style="position:fixed;margin:3em;bottom:0;right:0;animation:flash 1.5s ease-in-out infinite;z-index:6">
+  <a aria-current="page" class="ui active leaf" href="/">
+
+    <form class="ui form" action="/perform_demo/" enctype="multipart/form-data" method="post">
+      <button type="submit" class="ui large positive button">Demo</button>
+    </form>
+
+  </a>
+</div>
+
+
+</div>
+
+
+{% include 'include/footer.html' %}
 
 
 <!-- Content CSS HERE !-->
 <style>
   .inputfile {
-      width: 0.1px;
-      height: 0.1px;
-      opacity: 0;
-      overflow: hidden;
-      position: absolute;
-      z-index: -1;
-    }
-  .segment.ui{
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+  }
+
+  .segment.ui {
     padding: 40px !important;
     margin-bottom: 5%;
   }
 
-  .container.ui{
+  .container.ui {
     margin-bottom: 4% !important;
   }
+
   h1.ui.center.header {
     margin-top: 1em;
     margin-bottom: 1em;
   }
+
   h2.ui.center.header {
     margin: 4em 0em 2em;
   }
+
   h3.ui.center.header {
     margin-top: 1em;
     padding: 1em 0em;
   }
-  
 </style>
 
 

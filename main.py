@@ -1,21 +1,19 @@
 # Regular Support imports
 import os
-import re
 import shutil
 import numpy as np
-import pandas as pd
-from collections import Counter
+from library.helpers import openfile
 from processor.whatsapp import WhatsAppChatAnalysis
 
 # FAST API Imports
-from fastapi import FastAPI, File, UploadFile, Request
+
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
+from fastapi.templating import Jinja2Templates
+from fastapi import FastAPI, File, UploadFile, Request
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from library.helpers import *
 
 tags_metadata = [
     {
@@ -24,13 +22,14 @@ tags_metadata = [
     },
     {
         "name": "Processor",
-        "description": "Upload your whatsapp chat and boom, you have complete analysis.",
+        "description": "Upload your whatsapp chat & See Analysis."
     },
 ]
 
 app = FastAPI(
     title="WhatsApp Chat Processor",
-    description="This is DS project for Whatsapp chat analysis, with auto docs for the API and everything",
+    description="This is DS project for Whatsapp chat analysis,\
+        with auto docs for the API and everything",
     version="1.0.0",
     openapi_tags=tags_metadata,
     openapi_url="/api/v1/openapi.json"
@@ -48,42 +47,11 @@ async def main(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
-@app.get("/display", response_class=HTMLResponse)
-async def main(request: Request):
-    context = {
-        "total_emojis": 100,
-        "total_messages": 1000,
-        "total_images": 123,
-        "total_link": 12,
-        "author_list": 12,
-        "user_data": [{"user_number": "1","avg_words_per_msg": "123",
-                "author": "Rahul Kumeriya","color": "red",
-                  "emojis_sent": 123,
-                  "message_sent": 222223,
-                  "media_msg": "223",
-                 "link_share": "2323" },
-                 {"user_number": "2","avg_words_per_msg": "123",
-                "author": "Rahul","color": "red",
-                  "emojis_sent": "123",
-                  "message_sent": 123,
-                  "media_msg": "223",
-                 "link_share": "2323" },
-                 {"user_number": "3","avg_words_per_msg": "123",
-                "author": "Kumeriya","color": "red",
-                  "emojis_sent": "123",
-                  "message_sent": 1123,
-                  "media_msg": "223",
-                 "link_share": "2323" },]
-
-    }
-    return templates.TemplateResponse("statistics.html", {"request": request,  "context": context})
-
-
-
 @app.get("/page/{page_name}", response_class=HTMLResponse)
 async def show_page(request: Request, page_name: str):
     data = openfile(page_name+".md")
-    return templates.TemplateResponse("page.html", {"request": request, "data": data})
+    return templates.TemplateResponse(
+        "page.html", {"request": request, "data": data})
 
 
 @app.get("/heartbeat/", response_class=HTMLResponse, tags=["Processor"])
@@ -99,7 +67,9 @@ async def custom_http_exception_handler(request, exc):
     return RedirectResponse("/404_page_not_found/")
 
 
-@app.get("/404_page_not_found/", response_class=HTMLResponse, tags=["Processor"])
+@app.get(
+    "/404_page_not_found/",
+    response_class=HTMLResponse, tags=["Processor"])
 async def page_not_found_404(request: Request):
     """
     404 Page Not Found
@@ -112,7 +82,6 @@ async def processing(chat_file):
         chat = WhatsAppChatAnalysis()
         df = chat.convert_raw_to_dataframe_data(chat_file)
         # Get total message
-        
         total_messages = df.shape[0]
         # Get Total numbr of Emojis
         total_emojis = len(list(set([a for b in df.Emojis for a in b])))
@@ -121,7 +90,7 @@ async def processing(chat_file):
         # total links
         total_link = np.sum(df.Urlcount)
         # Total Author
-        author_list = df.Author.unique() 
+        author_list = df.Author.unique()
 
         # Generate Word Cloud
         for i in range(len(author_list)):
@@ -129,13 +98,15 @@ async def processing(chat_file):
             text = " ".join(review for review in dummy_df.Message)
             if len(text) > 0:
                 wordcloud_return = chat.generate_word_cloud(text)
-                user_data = chat.get_user_json_data(i+1, dummy_df, df, author_list[i], wordcloud_return)
+                user_data = chat.get_user_json_data(
+                    i+1, dummy_df, df, author_list[i], wordcloud_return)
                 result = chat.formation_of_complete_data(user_data)
             else:
                 wordcloud_return = chat.generate_word_cloud('Zero')
-                user_data = chat.get_user_json_data(i+1, dummy_df, df, author_list[i], wordcloud_return)
-                result = chat.formation_of_complete_data(user_data)        
-        
+                user_data = chat.get_user_json_data(
+                    i+1, dummy_df, df, author_list[i], wordcloud_return)
+                result = chat.formation_of_complete_data(user_data)
+        group_name = chat.group_name
         context = {
             "total_emojis": total_emojis,
             "total_messages": total_messages,
@@ -145,39 +116,52 @@ async def processing(chat_file):
             "user_data": result,
 
         }
-        return context
+        return {"group_name": group_name, "context": context}
+
 
 @app.post("/process_chat/", tags=["Processor"])
-async def process_uploaded_chat(request: Request, file: UploadFile = File(...)):
+async def process_uploaded_chat(
+        request: Request,
+        file: UploadFile = File(...)):
     """
-    Function to Process whatsApp Chat v2.21.11.15 standard format
+    Function to Process whatsApp Chat
+        v2.21.11.15 standard format
     """
     global upload_folder
     file_object = file.file
     chat_file = "_chat.txt"
-    #create empty file to copy the file_object to
+    # create empty file to copy the file_object
     upload_folder = open(os.path.join(file.filename), 'wb+')
     shutil.copyfileobj(file_object, upload_folder)
     shutil.move(file.filename, chat_file)
     upload_folder.close()
 
     if chat_file:
-        context = await processing(chat_file)
-        return templates.TemplateResponse("statistics.html", {"request": request, "context": context})
+        process_data = await processing(chat_file)
+        return templates.TemplateResponse(
+            "statistics.html", {
+                "request": request,
+                "context": process_data.get('context'),
+                "group_name": process_data.get('group_name')
+                })
     else:
         return {"error": "Please select upload file"}
 
-    
+
 @app.post("/perform_demo/", tags=["Demonstration"])
 async def demo(request: Request):
     """
     Demo Execution Mode
     """
     chat = WhatsAppChatAnalysis()
-    chat.generate_dummy_chat_file('processor/dummy_chat.txt' , '_chat.txt')
+    chat.generate_dummy_chat_file('processor/dummy_chat.txt', '_chat.txt')
     chat_file = "_chat.txt"
     if chat_file:
-        context = await processing(chat_file)
-        return templates.TemplateResponse("statistics.html", {"request": request, "context": context})
+        process_data = await processing(chat_file)
+        return templates.TemplateResponse(
+            "statistics.html", {
+                "request": request,
+                "context": process_data.get('context'),
+                "group_name": process_data.get('group_name')})
     else:
         return {"error": "Please select upload file"}
